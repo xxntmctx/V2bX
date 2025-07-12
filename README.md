@@ -6,7 +6,7 @@
 A V2board node server based on multi core, modified from XrayR.  
 一个基于多种内核的V2board节点服务端，修改自XrayR，支持V2ay,Trojan,Shadowsocks协议。
 
-**注意： 本项目需要搭配[修改版V2board](https://github.com/wyx2685/v2board)**
+**注意： 本项目需要搭配[修改版V2board](https://github.com/xxntmctx/v2board)**
 
 ## 特点
 
@@ -48,7 +48,7 @@ A V2board node server based on multi core, modified from XrayR.
 ### 一键安装
 
 ```
-wget -N https://raw.githubusercontent.com/wyx2685/V2bX-script/master/install.sh && bash install.sh
+wget -N https://raw.githubusercontent.com/xxntmctx/V2bX-script/master/install.sh && bash install.sh
 ```
 
 ### 手动安装
@@ -83,4 +83,4 @@ go build -v -o ./V2bX -tags "xray sing hysteria2 with_quic with_grpc with_utls w
 
 ## Stars 增长记录
 
-[![Stargazers over time](https://starchart.cc/wyx2685/V2bX.svg)](https://starchart.cc/wyx2685/V2bX)
+[![Stargazers over time](https://starchart.cc/xxntmctx/V2bX.svg)](https://starchart.cc/xxntmctx/V2bX)
