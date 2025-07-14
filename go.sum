@@ -1092,6 +1092,7 @@ github.com/volcengine/volc-sdk-golang v1.0.189 h1:VMDTHWYXakXJtZqPYn0As/h4eB0c4i
 github.com/volcengine/volc-sdk-golang v1.0.189/go.mod h1:u0VtPvlXWpXDTmc9IHkaW1q+5Jjwus4oAqRhNMDRInE=
 github.com/vultr/govultr/v3 v3.9.1 h1:uxSIb8Miel7tqTs3ee+z3t+JelZikwqBBsZzCOPBy/8=
 github.com/vultr/govultr/v3 v3.9.1/go.mod h1:Rd8ebpXm7jxH3MDmhnEs+zrlYW212ouhx+HeUMfHm2o=
+
 github.com/x448/float16 v0.8.4 h1:qLwI1I70+NjRFUR3zs1JPUCgaCXSh3SW62uAKT1mSBM=
 github.com/x448/float16 v0.8.4/go.mod h1:14CWIYCyZA/cWjXOioeEpHeN/83MdbZDRQHoFcYsOfg=
 github.com/xdg-go/pbkdf2 v1.0.0/go.mod h1:jrpuAogTd400dnrH08LKmI/xc1MbPOebTwRqcT5RDeI=
@@ -1107,6 +1108,8 @@ github.com/xtls/reality v0.0.0-20250608132114-50752aec6bfb h1:X6ziJCMsFF8Ac/0F3W
 github.com/xtls/reality v0.0.0-20250608132114-50752aec6bfb/go.mod h1:yD47RN65bDLZgyHWMfFDiqlzrq4usDMt/Xzsk6tMbhw=
 github.com/xtls/xray-core v1.250516.1-0.20250608135303-fbae89d017ae h1:Be9MicJQI+Iup03zNG7QMEidpbJj3b4//IM8jIAnLKY=
 github.com/xtls/xray-core v1.250516.1-0.20250608135303-fbae89d017ae/go.mod h1:MkfIs2WZ5VLtZHAwDKosSS05Kx5zFFOzvly7Hy6pfPs=
+github.com/xxntmctx/sing-box_mod v1.12.0-beta.17.2 h1:FAGkgUaBW9ke6fwKBwSJfwOxzGbdqLXu64binjw14P8=
+github.com/xxntmctx/sing-box_mod v1.12.0-beta.17.2/go.mod h1:ZybQCajA3r+okcxY9jNzcTIh35Kj35wbYANSoHU/kM8=
 github.com/yandex-cloud/go-genproto v0.0.0-20241220122821-aeb3b05efd1c h1:Rnr+lDYXVkP+3eT8/d68iq4G/UeIhyCQk+HKa8toTvg=
 github.com/yandex-cloud/go-genproto v0.0.0-20241220122821-aeb3b05efd1c/go.mod h1:0LDD/IZLIUIV4iPH+YcF+jysO3jkSvADFGm4dCAuwQo=
 github.com/yandex-cloud/go-sdk v0.0.0-20241220131134-2393e243c134 h1:qmpz0Kvr9GAng8LAhRcKIpY71CEAcL3EBkftVlsP5Cw=
