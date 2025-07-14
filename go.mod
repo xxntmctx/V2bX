@@ -284,7 +284,7 @@ require (
 	github.com/vishvananda/netns v0.0.5 // indirect
 	github.com/volcengine/volc-sdk-golang v1.0.189 // indirect
 	github.com/vultr/govultr/v3 v3.9.1 // indirect
-	github.com/xxntmctx/sing-vmess v0.0.0-20250524094403-696835735021 // indirect
+	github.com/xxntmctx/sing-vmess dev // indirect
 	github.com/x448/float16 v0.8.4 // indirect
 	github.com/xtls/reality v0.0.0-20250608132114-50752aec6bfb // indirect
 	github.com/yandex-cloud/go-genproto v0.0.0-20241220122821-aeb3b05efd1c // indirect
