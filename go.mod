@@ -283,7 +283,7 @@ require (
 	github.com/vmihailenco/tagparser/v2 v2.0.0 // indirect
 	github.com/volcengine/volc-sdk-golang v1.0.189 // indirect
 	github.com/vultr/govultr/v3 v3.9.1 // indirect
-	github.com/xxntmctx/sing-vmess dev // indirect
+	github.com/xxntmctx/sing-vmess v0.0.0-20250714014623-3c76c2f69324 // indirect
 	github.com/x448/float16 v0.8.4 // indirect
 	github.com/xtls/reality v0.0.0-20250725142056-5b52a03d4fb7 // indirect
 	github.com/yandex-cloud/go-genproto v0.0.0-20241220122821-aeb3b05efd1c // indirect
