@@ -1,0 +1,12 @@
+{
+    "subjectSelector": [
+        ""
+    ],
+    "pingConfig": {
+        "destination": "http://www.google.com/gen_204",
+        "interval": "30m",
+        "connectivity": "http://connectivitycheck.platform.hicloud.com/generate_204",
+        "timeout": "20s",
+        "sampling": 2
+    }
+}

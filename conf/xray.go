@@ -1,13 +1,14 @@
 package conf
 
 type XrayConfig struct {
-	LogConfig          *XrayLogConfig        `json:"Log"`
-	AssetPath          string                `json:"AssetPath"`
-	DnsConfigPath      string                `json:"DnsConfigPath"`
-	RouteConfigPath    string                `json:"RouteConfigPath"`
-	ConnectionConfig   *XrayConnectionConfig `json:"XrayConnectionConfig"`
-	InboundConfigPath  string                `json:"InboundConfigPath"`
-	OutboundConfigPath string                `json:"OutboundConfigPath"`
+	LogConfig                  *XrayLogConfig        `json:"Log"`
+	AssetPath                  string                `json:"AssetPath"`
+	DnsConfigPath              string                `json:"DnsConfigPath"`
+	RouteConfigPath            string                `json:"RouteConfigPath"`
+	ConnectionConfig           *XrayConnectionConfig `json:"XrayConnectionConfig"`
+	InboundConfigPath          string                `json:"InboundConfigPath"`
+	OutboundConfigPath         string                `json:"OutboundConfigPath"`
+	BurstObservatoryConfigPath string                `json:"BurstObservatoryConfigPath"`
 }
 
 type XrayLogConfig struct {
@@ -31,11 +32,12 @@ func NewXrayConfig() *XrayConfig {
 			AccessPath: "",
 			ErrorPath:  "",
 		},
-		AssetPath:          "/etc/V2bX/",
-		DnsConfigPath:      "",
-		InboundConfigPath:  "",
-		OutboundConfigPath: "",
-		RouteConfigPath:    "",
+		AssetPath:                  "/etc/V2bX/",
+		DnsConfigPath:              "",
+		InboundConfigPath:          "",
+		OutboundConfigPath:         "",
+		RouteConfigPath:            "",
+		BurstObservatoryConfigPath: "",
 		ConnectionConfig: &XrayConnectionConfig{
 			Handshake:    4,
 			ConnIdle:     30,
