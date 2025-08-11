@@ -30,16 +30,29 @@ func init() {
 
 // Xray Structure
 type Xray struct {
-	access     sync.Mutex
-	Server     *core.Instance
-	ihm        inbound.Manager
-	ohm        outbound.Manager
-	shm        statsFeature.Manager
-	dispatcher *dispatcher.DefaultDispatcher
+	access                    sync.Mutex
+	Server                    *core.Instance
+	ihm                       inbound.Manager
+	ohm                       outbound.Manager
+	shm                       statsFeature.Manager
+	dispatcher                *dispatcher.DefaultDispatcher
+	users                     *UserMap
+	nodeReportMinTrafficBytes map[string]int64
+}
+
+type UserMap struct {
+	uidMap  map[string]int
+	mapLock sync.RWMutex
 }
 
 func New(c *conf.CoreConfig) (vCore.Core, error) {
-	return &Xray{Server: getCore(c.XrayConfig)}, nil
+	return &Xray{
+		Server: getCore(c.XrayConfig),
+		users: &UserMap{
+			uidMap: make(map[string]int),
+		},
+		nodeReportMinTrafficBytes: make(map[string]int64),
+	}, nil
 }
 
 func parseConnectionConfig(c *conf.XrayConnectionConfig) (policy *coreConf.Policy) {
@@ -144,18 +157,40 @@ func getCore(c *conf.XrayConfig) *core.Instance {
 	corePolicyConfig := &coreConf.PolicyConfig{}
 	corePolicyConfig.Levels = map[uint32]*coreConf.Policy{0: levelPolicyConfig}
 	policyConfig, _ := corePolicyConfig.Build()
+	// BurstObservatory config
+	var burstObservatoryConfigTypedMsg *serial.TypedMessage
+	if c.BurstObservatoryConfigPath != "" {
+		burstObservatoryConfigData, err := os.ReadFile(c.BurstObservatoryConfigPath)
+		if err != nil {
+			log.WithField("err", err).Panic("Failed to read BurstObservatory config file")
+		} else {
+			var burstObservatoryConfig coreConf.BurstObservatoryConfig
+			if err = json.Unmarshal(burstObservatoryConfigData, &burstObservatoryConfig); err != nil {
+				log.WithField("err", err).Panic("Failed to unmarshal BurstObservatory config")
+			}
+			burstObservatoryMsg, err := burstObservatoryConfig.Build()
+			if err != nil {
+				log.WithField("err", err).Panic("Failed to build BurstObservatory config")
+			}
+			burstObservatoryConfigTypedMsg = serial.ToTypedMessage(burstObservatoryMsg)
+		}
+	}
 	// Build Xray conf
+	appList := []*serial.TypedMessage{
+		serial.ToTypedMessage(coreLogConfig.Build()),
+		serial.ToTypedMessage(&dispatcher.Config{}),
+		serial.ToTypedMessage(&stats.Config{}),
+		serial.ToTypedMessage(&proxyman.InboundConfig{}),
+		serial.ToTypedMessage(&proxyman.OutboundConfig{}),
+		serial.ToTypedMessage(policyConfig),
+		serial.ToTypedMessage(dnsConfig),
+		serial.ToTypedMessage(routeConfig),
+	}
+	if burstObservatoryConfigTypedMsg != nil {
+		appList = append(appList, burstObservatoryConfigTypedMsg)
+	}
 	config := &core.Config{
-		App: []*serial.TypedMessage{
-			serial.ToTypedMessage(coreLogConfig.Build()),
-			serial.ToTypedMessage(&dispatcher.Config{}),
-			serial.ToTypedMessage(&stats.Config{}),
-			serial.ToTypedMessage(&proxyman.InboundConfig{}),
-			serial.ToTypedMessage(&proxyman.OutboundConfig{}),
-			serial.ToTypedMessage(policyConfig),
-			serial.ToTypedMessage(dnsConfig),
-			serial.ToTypedMessage(routeConfig),
-		},
+		App:      appList,
 		Inbound:  inBoundConfig,
 		Outbound: outBoundConfig,
 	}
