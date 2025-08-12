@@ -14,6 +14,7 @@ import (
 	"github.com/InazumaV/V2bX/common/rate"
 	"github.com/InazumaV/V2bX/limiter"
 
+	"github.com/xtls/xray-core/app/router" // <-- 新增改动 1: 导入 app/router 包
 	"github.com/xtls/xray-core/common"
 	"github.com/xtls/xray-core/common/buf"
 	"github.com/xtls/xray-core/common/errors"
@@ -103,42 +104,39 @@ type DefaultDispatcher struct {
 	router   routing.Router
 	policy   policy.Manager
 	stats    stats.Manager
+	balancer router.Balancer // <-- 新增改动 2: 添加 balancer 字段
 	fdns     dns.FakeDNSEngine
 	Wm       *WriterManager
 	Counter  sync.Map
-	balancer routing.Balancer 
 }
 
 func init() {
-
-
-common.Must(common.RegisterConfig((*Config)(nil), func(ctx context.Context, config interface{}) (interface{}, error) {
-    d := new(DefaultDispatcher)
-
-    if err := core.RequireFeatures(ctx, func(om outbound.Manager, router routing.Router, pm policy.Manager, sm stats.Manager, b routing.Balancer, dc dns.Client) error { 
-        core.OptionalFeatures(ctx, func(fdns dns.FakeDNSEngine) {
-            d.fdns = fdns
-        })
-
-        return d.Init(config.(*Config), om, router, pm, sm, b) 
-    }); err != nil {
-        return nil, err
-    }
-    return d, nil
-}))
+	common.Must(common.RegisterConfig((*Config)(nil), func(ctx context.Context, config interface{}) (interface{}, error) {
+		d := new(DefaultDispatcher)
+		// 新增改动 3: 在注入参数中添加 router.Balancer
+		if err := core.RequireFeatures(ctx, func(om outbound.Manager, rtr router.Router, pm policy.Manager, sm stats.Manager, b router.Balancer, dc dns.Client) error {
+			d.router = rtr
+			d.balancer = b
+			core.OptionalFeatures(ctx, func(fdns dns.FakeDNSEngine) {
+				d.fdns = fdns
+			})
+			return d.Init(config.(*Config), om, pm, sm)
+		}); err != nil {
+			return nil, err
+		}
+		return d, nil
+	}))
 }
 
-func (d *DefaultDispatcher) Init(config *Config, om outbound.Manager, router routing.Router, pm policy.Manager, sm stats.Manager, b routing.Balancer) error {
+// Init initializes DefaultDispatcher.
+func (d *DefaultDispatcher) Init(config *Config, om outbound.Manager, pm policy.Manager, sm stats.Manager) error {
 	d.ohm = om
-	d.router = router
 	d.policy = pm
 	d.stats = sm
-	d.balancer = b 
 	d.Wm = &WriterManager{
 		writers: make(map[string]map[*ManagedWriter]struct{}),
 	}
 	return nil
-}
 }
 
 // Type implements common.HasType.
@@ -423,10 +421,9 @@ func sniffer(ctx context.Context, cReader *cachedReader, metadataOnly bool, netw
 				if !payload.IsEmpty() {
 					result, err := sniffer.Sniff(ctx, payload.Bytes(), network)
 					switch err {
-					case common.ErrNoClue: // No Clue: protocol not matches, and sniffer cannot determine whether there will be a match or not
+					case common.ErrNoClue:
 						totalAttempt++
-					case protocol.ErrProtoNeedMoreData: // Protocol Need More Data: protocol matches, but need more data to complete sniffing
-						// in this case, do not add totalAttempt(allow to read until timeout)
+					case protocol.ErrProtoNeedMoreData:
 					default:
 						return result, err
 					}
@@ -508,46 +505,39 @@ func (d *DefaultDispatcher) routedDispatch(ctx context.Context, link *transport.
 			common.Interrupt(link.Reader)
 			return
 		}
-} else if d.router != nil {
-    if route, err := d.router.PickRoute(routingLink); err == nil {
-        
-
-        if balancerTag := route.GetBalancerTag(); balancerTag != "" {
-    if d.balancer != nil {
-        h, err := d.balancer.PickOutbound(balancerTag)
-        if err == nil {
-             isPickRoute = 2
-             
-             errors.LogInfo(ctx, "hit balancer rule: [", route.GetRuleTag(), "], selected outbound [", h.Tag(), "] for [", destination, "]")
-             handler = h
-        } else {
-             
-             errors.LogWarning(ctx, "failed to pick an outbound from balancer [", balancerTag, "]: ", err)
-        }
-    } else {
-        
-        errors.LogWarning(ctx, "routing to a balancer [", balancerTag, "] but balancer manager is not available")
-    }
-} else if outTag := route.GetOutboundTag(); outTag != "" { 
-    if h := d.ohm.GetHandler(outTag); h != nil {
-        isPickRoute = 2
-        if route.GetRuleTag() == "" {
-            
-            errors.LogInfo(ctx, "taking detour [", outTag, "] for [", destination, "]")
-        } else {
-            
-            errors.LogInfo(ctx, "hit route rule: [", route.GetRuleTag(), "], taking detour [", outTag, "] for [", destination, "]")
-        }
-        handler = h
-    } else {
-        
-        errors.LogWarning(ctx, "non-existing outbound tag: ", outTag)
-    }
-} else {
-    
-    errors.LogInfo(ctx, "no route matched, using default for [", destination, "]")
-}
-}
+	} else if d.router != nil {
+		if route, err := d.router.PickRoute(routingLink); err == nil {
+			// 新增改动 4: 路由决策逻辑
+			if balancerTag := route.GetBalancerTag(); balancerTag != "" {
+				if d.balancer != nil {
+					h, err := d.balancer.PickOutbound(balancerTag)
+					if err == nil {
+						isPickRoute = 2
+						errors.LogInfo(ctx, "hit balancer rule: [", route.GetRuleTag(), "], selected outbound [", h.Tag(), "] for [", destination, "]")
+						handler = h
+					} else {
+						errors.LogWarning(ctx, "failed to pick an outbound from balancer [", balancerTag, "]: ", err)
+					}
+				} else {
+					errors.LogWarning(ctx, "routing to a balancer [", balancerTag, "] but balancer manager is not available")
+				}
+			} else if outTag := route.GetOutboundTag(); outTag != "" {
+				if h := d.ohm.GetHandler(outTag); h != nil {
+					isPickRoute = 2
+					if route.GetRuleTag() == "" {
+						errors.LogInfo(ctx, "taking detour [", outTag, "] for [", destination, "]")
+					} else {
+						errors.LogInfo(ctx, "hit route rule: [", route.GetRuleTag(), "], taking detour [", outTag, "] for [", destination, "]")
+					}
+					handler = h
+				} else {
+					errors.LogWarning(ctx, "non-existing outbound tag: ", outTag)
+				}
+			}
+		} else {
+			errors.LogInfo(ctx, "no route matched, using default for [", destination, "]")
+		}
+	}
 
 	if handler == nil {
 		handler = d.ohm.GetDefaultHandler()
