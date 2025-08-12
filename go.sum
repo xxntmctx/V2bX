@@ -1116,7 +1116,10 @@ github.com/xxntmctx/sing-box_mod v1.12.0-beta.17.3 h1:/Y6tj5tLLc0EI4iPhzn3h35/K8
 github.com/xxntmctx/sing-box_mod v1.12.0-beta.17.3/go.mod h1:BS/5tpbp9Xo5KgrExTo+IcYKuxNbjga8+qLn/jNvREM=
 github.com/xxntmctx/sing-vmess v0.0.0-20250714014623-3c76c2f69324 h1:IVAs3RfNmEU9dHZCEyA5XfW7HzTjrMUINqRValYy2oI=
 github.com/xxntmctx/sing-vmess v0.0.0-20250714014623-3c76c2f69324/go.mod h1:uCIClBwMN3tXKHzZRzBKk43YN7hLnwvCzrEIN/LxsYo=
+<<<<<<< HEAD
 >>>>>>> 38a1369 (修改为v1.12.0-beta.17.3 和哈希)
+=======
+>>>>>>> bc9ca840b5684585ca19f8211b71fdb6ca289adc
 github.com/yandex-cloud/go-genproto v0.0.0-20241220122821-aeb3b05efd1c h1:Rnr+lDYXVkP+3eT8/d68iq4G/UeIhyCQk+HKa8toTvg=
 github.com/yandex-cloud/go-genproto v0.0.0-20241220122821-aeb3b05efd1c/go.mod h1:0LDD/IZLIUIV4iPH+YcF+jysO3jkSvADFGm4dCAuwQo=
 github.com/yandex-cloud/go-sdk v0.0.0-20241220131134-2393e243c134 h1:qmpz0Kvr9GAng8LAhRcKIpY71CEAcL3EBkftVlsP5Cw=

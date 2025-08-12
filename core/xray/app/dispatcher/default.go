@@ -101,6 +101,7 @@ func (r *cachedReader) Interrupt() {
 // DefaultDispatcher is a default implementation of Dispatcher.
 type DefaultDispatcher struct {
 <<<<<<< HEAD
+<<<<<<< HEAD
 	ohm     outbound.Manager
 	router  routing.Router
 	policy  policy.Manager
@@ -109,6 +110,8 @@ type DefaultDispatcher struct {
 	Wm      *WriterManager
 	Counter sync.Map
 =======
+=======
+>>>>>>> bc9ca840b5684585ca19f8211b71fdb6ca289adc
 	ohm      outbound.Manager
 	router   routing.Router
 	policy   policy.Manager
@@ -118,10 +121,13 @@ type DefaultDispatcher struct {
 	Wm       *WriterManager
 	Counter  sync.Map
 <<<<<<< HEAD
+<<<<<<< HEAD
 	balancer routing.Balancer 
 >>>>>>> bc2112a (feat(dispatcher): Add support for balancers in routing)
 =======
 >>>>>>> bc9ca84 (fix)
+=======
+>>>>>>> bc9ca840b5684585ca19f8211b71fdb6ca289adc
 }
 
 func init() {
@@ -149,11 +155,14 @@ func (d *DefaultDispatcher) Init(config *Config, om outbound.Manager, pm policy.
 	d.stats = sm
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 	d.balancer = b 
 >>>>>>> bc2112a (feat(dispatcher): Add support for balancers in routing)
 =======
 >>>>>>> bc9ca84 (fix)
+=======
+>>>>>>> bc9ca840b5684585ca19f8211b71fdb6ca289adc
 	d.Wm = &WriterManager{
 		writers: make(map[string]map[*ManagedWriter]struct{}),
 	}
